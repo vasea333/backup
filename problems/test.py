@@ -14,3 +14,4 @@ print l
 whilw 4 in l:
 l.remove(4)
 l.pop(3)
+#iug
