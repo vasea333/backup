@@ -1,1 +1,1 @@
-__author__ = 'frost'
+input('asd')
