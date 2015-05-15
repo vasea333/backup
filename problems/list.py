@@ -10,6 +10,7 @@ l.pop(3)
 l.sort()
 l.append('Oleg')
 print(l)
+## the end
 
 
 
