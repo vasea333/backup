@@ -1,4 +1,4 @@
-'''
+
 try:
     str = input('Do you want to make 120K?')
 
@@ -9,7 +9,4 @@ try:
     else:
         print('answer "yes" or "no"')
 except:
-    print('answer "yes" or "no"')'''
-
-a= input()
-print type(a)
+    print('answer "yes" or "no"')
