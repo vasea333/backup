@@ -1,7 +1,7 @@
 l = range(1, 11)
 for i in range(0, len(l)):
-    print (l[i]*2)
-    l[i]=l[i]*2
+    print (l[i] * 2)
+    l[i] = l[i]*2
 l.reverse()
 
 while 4 in l:
