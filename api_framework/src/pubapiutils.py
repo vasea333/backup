@@ -56,7 +56,7 @@ def del_folder(folder_name, path=None, domain=None, method=None, content_type=No
     if username is None:
         username = 'admin'
     if password is None:
-        password = 'egnyte4you'
+        password = '12345678'
     if path is None:
         path = '/Shared/test_folder/'
 
