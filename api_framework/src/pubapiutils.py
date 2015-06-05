@@ -13,7 +13,7 @@ def create_folder(folder_name, path=None, domain=None, method=None, content_type
     if accept is None:
         accept = 'application/json'
     if username is None:
-        username = 'istepanko'
+        username = 'admin'
     if password is None:
         password = 'egnyte4you'
     if path is None:
@@ -54,7 +54,7 @@ def del_folder(folder_name, path=None, domain=None, method=None, content_type=No
     if accept is None:
         accept = 'application/json'
     if username is None:
-        username = 'istepanko'
+        username = 'admin'
     if password is None:
         password = 'egnyte4you'
     if path is None:
