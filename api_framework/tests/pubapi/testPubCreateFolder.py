@@ -9,7 +9,7 @@ def test_create_100_folders_positive():
         resp = pubapiutils.create_folder(folder_name)
         assert resp.status_code == httplib.CREATED
         assert resp.json == no_json
-
+        pubapiutils.del_folder(folder_name)
 
 def test_create_folders_positive():
     no_json = 'NoJSON'
@@ -18,3 +18,4 @@ def test_create_folders_positive():
         resp = pubapiutils.create_folder(folder_name)
         assert resp.status_code == httplib.CREATED
         assert resp.json == no_json
+        pubapiutils.del_folder(folder_name)
