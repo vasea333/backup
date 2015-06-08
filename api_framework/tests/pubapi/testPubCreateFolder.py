@@ -41,3 +41,10 @@ class TestClass:
             assert resp.status_code == httplib.CREATED
             assert resp.json == self.no_json
             self.calls.delete_folder(folder_path)
+
+    def test_move_folder(self):
+        folder = self.utils.random_name()
+        self.calls.create_folder(folder)
+        resp = self.calls.move_folder(folder)
+        assert resp.status_code == httplib.OK
+        assert resp.json == self.no_json
