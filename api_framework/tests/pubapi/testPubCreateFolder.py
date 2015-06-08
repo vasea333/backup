@@ -43,8 +43,26 @@ class TestClass:
             self.calls.delete_folder(folder_path)
 
     def test_move_folder(self):
-        folder = self.utils.random_name()
-        self.calls.create_folder(folder)
-        resp = self.calls.move_folder(folder)
+        folder_name1 = self.utils.random_name()
+        folder_name2 = self.utils.random_name()
+        folder_name3 = self.utils.random_name()
+        self.calls.create_folder(folder_name1)
+        path1 = self.config.testpath + folder_name1
+        self.calls.create_folder(folder_name1, path=path1)
+        self.calls.create_folder(folder_name2, path=path1)
+        path2 = '%s/%s/' % (path1, folder_name1)
+        self.calls.create_folder(folder_name1, path=path2)
+        self.calls.create_folder(folder_name2, path=path2)
+        self.calls.create_folder(folder_name3, path=path2)
+        path3 = '%s/%s/' % (path1, folder_name2)
+        resp = self.calls.move_folder(folder_name1, destination=path3, path=path2)
         assert resp.status_code == httplib.OK
         assert resp.json == self.no_json
+        resp = self.calls.move_folder(folder_name2, destination=path3, path=path2)
+        assert resp.status_code == httplib.OK
+        assert resp.json == self.no_json
+        resp = self.calls.move_folder(folder_name3, destination=path3, path=path2)
+        assert resp.status_code == httplib.OK
+        assert resp.json == self.no_json
+        resp = self.calls.delete_folder(folder_path=path1)
+        assert resp.status_code == httplib.OK
