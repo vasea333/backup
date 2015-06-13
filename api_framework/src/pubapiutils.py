@@ -2,8 +2,9 @@ import requests
 import json
 from ConfigParser import SafeConfigParser
 import os
-import inspect
 from random import randint
+import base64
+import inspect
 
 
 class Config:
@@ -23,6 +24,7 @@ class Config:
 class Calls:
     def __init__(self):
         self.config = Config()
+        self.no_json = 'NoJSON'
 
     def create_folder(self, folder_name, path=None, domain=None, method=None, content_type=None, accept=None,
                       username=None, password=None, print_call=True):
@@ -50,30 +52,24 @@ class Calls:
         data['action'] = 'add_folder'
         data = json.dumps(data)
 
+        headers['Authorization'] = 'Basic %s' % base64.b64encode('%s:%s' % (username, password))
+
         r = requests.request(
             method=method,
             url=url,
             headers=headers,
-            data=data,
-            auth=(username, password)
+            data=data
         )
 
         try:
             json_resp = json.loads(r.content)
         except ValueError:
-            json_resp = 'NoJSON'
-
-        if print_call:
-            header_string = ''
-            for key in headers:
-                header_string += '-H "%s: %s" ' % (key, headers[key])
-            print('\n*TESTCASE: %s, API Call: Create Folder*' % inspect.stack()[1][3])
-            print('\nCurl is:\n curl %s "%s" -d \'%s\' -u%s:%s -X %s' % (header_string, url, data, username, password,
-                                                                       method))
-            print('HTTP Code: %s' % r.status_code)
-            print('\nJSON response is:\n %s' % json_resp)
+            json_resp = self.no_json
 
         r.json = json_resp
+        if print_call:
+            self.nice_print_out(call_name='Create Folder', r=r, caller=inspect.stack()[1][3])
+
         return r
 
     def delete_folder(self, name, parent_path=None, domain=None, method=None, content_type=None, accept=None,
@@ -101,11 +97,12 @@ class Calls:
         headers['Content-Type'] = content_type
         headers['Accept'] = accept
 
+        headers['Authorization'] = 'Basic %s' % base64.b64encode('%s:%s' % (username, password))
+
         r = requests.request(
             method=method,
             url=url,
-            headers=headers,
-            auth=(username, password)
+            headers=headers
         )
 
         try:
@@ -113,16 +110,10 @@ class Calls:
         except ValueError:
             json_resp = 'NoJSON'
 
-        if print_call:
-            header_string = ''
-            for key in headers:
-                header_string += '-H "%s: %s" ' % (key, headers[key])
-            print('\n*TESTCASE: %s, API Call: Delete Folder*' % inspect.stack()[1][3])
-            print('\nCurl is:\n curl %s "%s" -u%s:%s -X %s' % (header_string, url, username, password, method))
-            print('HTTP Code: %s' % r.status_code)
-            print('\nJSON response is:\n %s' % json_resp)
-
         r.json = json_resp
+        if print_call:
+            self.nice_print_out(call_name='Delete Folder', r=r, caller=inspect.stack()[1][3])
+
         return r
 
     def move_item(self, name, destination, parent_path=None, domain=None, method=None, content_type=None,
@@ -153,12 +144,13 @@ class Calls:
         data['destination'] = destination + '/' + name
         data = json.dumps(data)
 
+        headers['Authorization'] = 'Basic %s' % base64.b64encode('%s:%s' % (username, password))
+
         r = requests.request(
             method=method,
             url=url,
             headers=headers,
-            data=data,
-            auth=(username, password)
+            data=data
         )
 
         try:
@@ -166,17 +158,10 @@ class Calls:
         except ValueError:
             json_resp = 'NoJSON'
 
-        if print_call:
-            header_string = ''
-            for key in headers:
-                header_string += '-H "%s: %s" ' % (key, headers[key])
-            print('\n*TESTCASE: %s, API Call: Move Item*' % inspect.stack()[1][3])
-            print('\nCurl is:\n curl %s "%s" -d \'%s\' -u%s:%s -X %s' % (header_string, url, data, username, password,
-                                                                         method))
-            print('HTTP Code: %s' % r.status_code)
-            print('\nJSON response is:\n %s' % json_resp)
-
         r.json = json_resp
+        if print_call:
+            self.nice_print_out(call_name='Move Item', r=r, caller=inspect.stack()[1][3])
+
         return r
 
     def set_perms(self, folder_path, users, permission, domain=None, method=None, content_type=None, accept=None,
@@ -209,12 +194,13 @@ class Calls:
             data['users'].append(users)
         data = json.dumps(data)
 
+        headers['Authorization'] = 'Basic %s' % base64.b64encode('%s:%s' % (username, password))
+
         r = requests.request(
             method=method,
             url=url,
             headers=headers,
-            data=data,
-            auth=(username, password)
+            data=data
         )
 
         try:
@@ -222,17 +208,10 @@ class Calls:
         except ValueError:
             json_resp = 'NoJSON'
 
-        if print_call:
-            header_string = ''
-            for key in headers:
-                header_string += '-H "%s: %s" ' % (key, headers[key])
-            print('\n*TESTCASE: %s, API Call: Set Perms*' % inspect.stack()[1][3])
-            print('\nCurl is:\n curl %s "%s" -d \'%s\' -u%s:%s -X %s' % (header_string, url, data, username, password,
-                                                                         method))
-            print('HTTP Code: %s' % r.status_code)
-            print('\nJSON response is:\n %s' % json_resp)
-
         r.json = json_resp
+        if print_call:
+            self.nice_print_out(call_name='Set Permissions', r=r, caller=inspect.stack()[1][3])
+
         return r
 
     def list_perms(self, folder_path, users, domain=None, method=None, content_type=None, accept=None,
@@ -258,11 +237,12 @@ class Calls:
 
         url += '?users=%s' % users
 
+        headers['Authorization'] = 'Basic %s' % base64.b64encode('%s:%s' % (username, password))
+
         r = requests.request(
             method=method,
             url=url,
-            headers=headers,
-            auth=(username, password)
+            headers=headers
         )
 
         try:
@@ -270,16 +250,10 @@ class Calls:
         except ValueError:
             json_resp = 'NoJSON'
 
-        if print_call:
-            header_string = ''
-            for key in headers:
-                header_string += '-H "%s: %s" ' % (key, headers[key])
-            print('\n*TESTCASE: %s, API Call: List Perms*' % inspect.stack()[1][3])
-            print('\nCurl is:\n curl %s "%s" -u%s:%s -X %s' % (header_string, url, username, password, method))
-            print('HTTP Code: %s' % r.status_code)
-            print('\nJSON response is:\n %s' % json_resp)
-
         r.json = json_resp
+        if print_call:
+            self.nice_print_out(call_name='List Permissions', r=r, caller=inspect.stack()[1][3])
+
         return r
 
     def list_folders(self, folder_path, domain=None, method=None, content_type=None, accept=None, username=None,
@@ -303,11 +277,12 @@ class Calls:
         headers['Content-Type'] = content_type
         headers['Accept'] = accept
 
+        headers['Authorization'] = 'Basic %s' % base64.b64encode('%s:%s' % (username, password))
+
         r = requests.request(
             method=method,
             url=url,
-            headers=headers,
-            auth=(username, password)
+            headers=headers
         )
 
         try:
@@ -315,17 +290,31 @@ class Calls:
         except ValueError:
             json_resp = 'NoJSON'
 
-        if print_call:
-            header_string = ''
-            for key in headers:
-                header_string += '-H "%s: %s" ' % (key, headers[key])
-            print('\n*TESTCASE: %s, API Call: List Folders*' % inspect.stack()[1][3])
-            print('\nCurl is:\n curl %s "%s" -u%s:%s -X %s' % (header_string, url, username, password, method))
-            print('HTTP Code: %s' % r.status_code)
-            print('\nJSON response is:\n %s' % json_resp)
-
         r.json = json_resp
+        if print_call:
+            self.nice_print_out(call_name='List Folders', r=r, caller=inspect.stack()[1][3])
+
         return r
+
+    @staticmethod
+    def nice_print_out(call_name, r, caller):
+        header_string = ''
+        for key in r.request.headers:
+            header_string += '-H "%s: %s" ' % (key, r.request.headers[key])
+        print('\n*TestCase Name: %s, API Call: %s*' % (caller, call_name))
+        if r.request.body:
+            print('Curl is:\n curl %s "%s" -d \'%s\' -X %s' % (header_string, r.request.url, r.request.body,
+                                                               r.request.method))
+        else:
+            print('Curl is:\n curl %s "%s" -X %s' % (header_string, r.request.url, r.request.method))
+        print('\nResponse status code: %s' % r.status_code)
+        if r.json != 'NoJSON':
+            try:
+                print('\nResponse body:\n %s' % json.dumps(r.json, indent=2))
+            except TypeError:
+                print('\nResponse body:\n %s' % r.json)
+        else:
+            print('\nNo body in the response.')
 
 
 class Utils:
