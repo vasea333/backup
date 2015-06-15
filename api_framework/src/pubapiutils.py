@@ -5,6 +5,9 @@ import os
 from random import randint
 import base64
 import inspect
+import random
+from email.utils import formatdate
+import filecmp
 
 
 class Config:
@@ -19,6 +22,7 @@ class Config:
         self.password = self.parser.get('Server', 'passwd')
         self.puser = self.parser.get('Server', 'puser')
         self.testpath = self.parser.get('Server', 'testpath')
+        self.testdata = './test_files'
 
 
 class Calls:
@@ -73,7 +77,7 @@ class Calls:
         return r
 
     def delete_folder(self, name, parent_path=None, domain=None, method=None, content_type=None, accept=None,
-                      username=None, password=None, print_call=True):
+                      username=None, password=None, print_call=True, caller=None):
         if domain is None:
             domain = self.config.domain
         if method is None:
@@ -86,6 +90,8 @@ class Calls:
             username = self.config.admin_login
         if password is None:
             password = self.config.password
+        if caller is None:
+            caller = inspect.stack()[1][3]
 
         endpoint = '/public-api/v1/fs'
 
@@ -108,11 +114,11 @@ class Calls:
         try:
             json_resp = json.loads(r.content)
         except ValueError:
-            json_resp = 'NoJSON'
+            json_resp = self.no_json
 
         r.json = json_resp
         if print_call:
-            self.nice_print_out(call_name='Delete Folder', r=r, caller=inspect.stack()[1][3])
+            self.nice_print_out(call_name='Delete Folder', r=r, caller=caller)
 
         return r
 
@@ -156,7 +162,7 @@ class Calls:
         try:
             json_resp = json.loads(r.content)
         except ValueError:
-            json_resp = 'NoJSON'
+            json_resp = self.no_json
 
         r.json = json_resp
         if print_call:
@@ -206,7 +212,7 @@ class Calls:
         try:
             json_resp = json.loads(r.content)
         except ValueError:
-            json_resp = 'NoJSON'
+            json_resp = self.no_json
 
         r.json = json_resp
         if print_call:
@@ -248,7 +254,7 @@ class Calls:
         try:
             json_resp = json.loads(r.content)
         except ValueError:
-            json_resp = 'NoJSON'
+            json_resp = self.no_json
 
         r.json = json_resp
         if print_call:
@@ -257,7 +263,7 @@ class Calls:
         return r
 
     def list_folders(self, folder_path, domain=None, method=None, content_type=None, accept=None, username=None,
-                     password=None, print_call=True):
+                     password=None, print_call=True, caller=None):
         if domain is None:
             domain = self.config.domain
         if method is None:
@@ -270,6 +276,8 @@ class Calls:
             username = self.config.admin_login
         if password is None:
             password = self.config.password
+        if caller is None:
+            caller = inspect.stack()[1][3]
 
         endpoint = '/public-api/v1/fs'
         url = '%s%s%s' % (domain, endpoint, folder_path)
@@ -288,12 +296,104 @@ class Calls:
         try:
             json_resp = json.loads(r.content)
         except ValueError:
-            json_resp = 'NoJSON'
+            json_resp = self.no_json
 
         r.json = json_resp
         if print_call:
-            self.nice_print_out(call_name='List Folders', r=r, caller=inspect.stack()[1][3])
+            self.nice_print_out(call_name='List Folders', r=r, caller=caller)
 
+        return r
+
+    def upload(self, filename, path=None, time1=None, server=None, username=None, password=None, name=None,
+               content_type=None, print_call=True, method=None):
+        if server is None:
+            server = self.config.domain
+        if name is None:
+            name = os.path.basename(filename)
+        if time1 is None:
+            time1 = formatdate()
+        if path is None:
+            path = self.config.testpath
+        if method is None:
+            method = 'POST'
+        if username is None:
+            username = self.config.admin_login
+        if password is None:
+            password = self.config.password
+
+        headers = dict()
+        headers['Authorization'] = 'Basic %s' % base64.b64encode('%s:%s' % (username, password))
+        headers['Last-Modified'] = time1
+
+        if content_type is not None:
+            headers['Content-type'] = content_type
+
+        url = server + '/public-api/v1/fs-content' + path + '/' + name
+
+        local_file_path = '%s/%s' % (self.config.testdata, filename)
+
+        r = requests.request(
+            url=url,
+            headers=headers,
+            data=open(local_file_path, 'rb'),
+            method=method
+        )
+
+        try:
+            json_resp = json.loads(r.content)
+        except ValueError:
+            if method == 'OPTIONS':
+                json_resp = r.content
+            else:
+                json_resp = self.no_json
+
+        r.request.body = '<FILE_DATA> at %s' % local_file_path
+        r.json = json_resp
+        if print_call:
+            self.nice_print_out(call_name='Upload File', r=r, caller=inspect.stack()[1][3])
+
+        return r
+
+    def download(self, filename=None, file_id=None, entry_id=None, path=None, server=None, username=None,
+                 password=None):
+        if server is None:
+            server = self.config.domain
+        if path is None and filename is None and file_id:
+            url = server + '/public-api/v1/fs-content/ids/file/' + file_id
+        elif path is None and not file_id:
+            url = server + '/public-api/v1/fs-content' + self.config.testpath + '/' + filename
+        else:
+            url = server + '/public-api/v1/fs-content' + path + '/' + filename
+        if username is None:
+            username = self.config.admin_login
+        if password is None:
+            password = self.config.password
+
+        if entry_id is not None:
+            url += '?entry_id=%s' % entry_id
+
+        headers = dict()
+
+        headers['Authorization'] = 'Basic %s' % base64.b64encode('%s:%s' % (username, password))
+
+        r = requests.get(
+            url=url,
+            headers=headers,
+            stream=True
+        )
+
+        try:
+            json_resp = json.loads(r.content)
+        except ValueError:
+
+            file1 = Utils.random_name()
+            with open(self.config.testdata + '/' + file1, 'wb') as f:
+                for chunk in r.iter_content(1024):
+                    if chunk:
+                        f.write(chunk)
+                        f.flush()
+            return r.status_code, file1
+        r.json = json_resp
         return r
 
     @staticmethod
@@ -326,8 +426,12 @@ class Utils:
     def random_name():
         return 'test_name%s' % randint(1000000, 9999999)
 
+    @staticmethod
+    def compare(file1, file2):
+        return filecmp.cmp(Config().testdata + '/' + file1, Config().testdata + '/' + file2)
+
     def delete_all_except(self, l):
-        resp = self.calls.list_folders(folder_path='/Shared')
+        resp = self.calls.list_folders(folder_path='/Shared', caller='Cleanup')
         l1 = resp.json
 
         for i in range(len(l1['folders'])):
@@ -337,6 +441,28 @@ class Utils:
         while l1['folders'].count(None) != len(l1['folders']):
             for elem in l1['folders']:
                 if elem is not None:
-                    self.calls.delete_folder(parent_path='/Shared', name=elem['name'])
+                    self.calls.delete_folder(parent_path='/Shared', name=elem['name'], caller='Cleanup')
                     index = l1['folders'].index(elem)
                     del l1['folders'][index]
+
+    def form_standard_path(self, name):
+        return '%s/%s' % (self.config.testpath, name)
+
+    def gen_file(self, file_name=None, block_size=None, num_blocks=None, text=None):
+        if block_size is None:
+            block_size = 200
+        if num_blocks is None:
+            num_blocks = 1
+        if file_name is None:
+            file_name = 'test_filename_' + str(random.randint(1, 10000000)) + '.txt'
+        file_path = '%s/%s' % (self.config.testdata, file_name)
+        if not os.path.exists(self.config.testdata):
+                cmd = 'mkdir %s' % self.config.testdata
+                os.system(cmd)
+        if not os.path.isfile('.test_files/%s' % file_name) and text is None:
+            cmd = "dd if=/dev/urandom of='%s' bs=%d count=%d 2>/dev/null" % (file_path, block_size, num_blocks)
+            os.system(cmd)
+        elif text is not None:
+            cmd = 'echo "%s" > %s' % (text, file_path)
+            os.system(cmd)
+        return file_name
