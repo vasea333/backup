@@ -445,8 +445,11 @@ class Utils:
                     index = l1['folders'].index(elem)
                     del l1['folders'][index]
 
-    def form_standard_path(self, name):
-        return '%s/%s' % (self.config.testpath, name)
+    def form_standard_path(self, name, dir_name = None):
+        if dir_name is None:
+            return '%s/%s' % (self.config.testpath, name)
+        else:
+            return '%s/%s/%s' % (self.config.testpath, dir_name, name)
 
     def gen_file(self, file_name=None, block_size=None, num_blocks=None, text=None):
         if block_size is None:
