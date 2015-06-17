@@ -75,3 +75,13 @@ class TestClass(TestCase):
         self.calls.create_folder(item, target_folder_path)
         resp = self.calls.move_item(name=item, destination=target_folder_path, parent_path=source_folder_path)
         assert resp.status_code == httplib.OK
+
+
+    def test_move_folder_in_file(self):
+        file = self.utils.gen_file()
+        folder = self.utils.random_name()
+        target_file_path = self.utils.form_standard_path(file)
+        self.calls.upload(file)
+        self.calls.create_folder(folder)
+        resp = self.calls.move_item(name=folder, destination=target_file_path)
+        assert resp.status_code == httplib.FORBIDDEN
