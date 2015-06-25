@@ -13,6 +13,7 @@ class TestClass(TestCase):
         cls.calls = Calls()
         cls.config = Config()
         cls.utils = Utils()
+        cls.utils.del_test_folder()
 
     def setUp(self):
         self.utils.delete_all_except(['Documents'])
@@ -20,8 +21,8 @@ class TestClass(TestCase):
     def test_move_folder_positive(self):
         folder1 = self.utils.random_name()
         folder2 = self.utils.random_name()
-        folder2_path = '%s/%s' % (self.config.testpath, folder2)
-        folder1_path = '%s/%s' % (self.config.testpath, folder1)
+        folder2_path = self.utils.form_standard_path(folder2)
+        folder1_path = self.utils.form_standard_path(folder1)
         self.calls.create_folder(folder1)
         self.calls.create_folder(folder2)
         resp = self.calls.move_item(name=folder1, destination=folder2_path)
@@ -35,7 +36,7 @@ class TestClass(TestCase):
     def test_move_non_existent_folder(self):
         folder1 = self.utils.random_name()
         folder2 = self.utils.random_name()
-        folder1_path = '%s/%s' % (self.config.testpath, folder1)
+        folder1_path = self.utils.form_standard_path(folder1)
         self.calls.create_folder(folder1)
         resp = self.calls.move_item(name=folder2, destination=folder1_path, parent_path=self.config.testpath)
         assert resp.status_code == httplib.NOT_FOUND
@@ -77,12 +78,12 @@ class TestClass(TestCase):
         assert resp.status_code == httplib.OK
         self.calls.delete_folder(name='', parent_path=self.config.testpath)
 
-    def test_move_folder_in_file(self):
-        file = self.utils.gen_file()
+    def test_move_folder_into_file(self):
+        file1 = self.utils.gen_file()
         folder = self.utils.random_name()
-        target_file_path = self.utils.form_standard_path(file)
-        self.calls.upload(file)
+        target_file_path = self.utils.form_standard_path(file1)
+        self.calls.upload(file1)
         self.calls.create_folder(folder)
         resp = self.calls.move_item(name=folder, destination=target_file_path)
         assert resp.status_code == httplib.FORBIDDEN
-        self.calls.delete_folder(name='', parent_path=self.config.testpath)
+        assert resp.json['errorMessage'] == 'A file with the same name already exists: %s' % target_file_path
