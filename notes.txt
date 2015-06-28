@@ -1,0 +1,4 @@
+syslog >> lest.log | tail -f test.log | grep
+
+nosetests-2.7 tests/pubapi/testPubMoveItem.py:TestClass.test_merge_two_items_same_name --nocapture
+

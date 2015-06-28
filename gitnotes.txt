@@ -1,0 +1,22 @@
+
+git config --global user.name “alexcomo”
+git config --global user.signingkey <gpg-key-id>
+git clone https://github.com/alexcomo/api_alex.git
+git status —column
+
+git remote add origin https://github.com/alexcomo/api_alex.git
+
+git ls-files
+
+git add filename
+
+git commit -m "first commit"
+
+git push origin1 master
+
+git remote set-url origin https://github.com/alexcomo/api_alex.git
+
+working directory
+
+git clone https://github.com/IlyaQA/api_class.git
+git remote add origin1 https://github.com/IlyaQA/api_class.git

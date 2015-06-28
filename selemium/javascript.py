@@ -1,4 +1,3 @@
-from selenium import webdriver
 import unittest
 
 class JavascriptTest(unittest.TestCase):
