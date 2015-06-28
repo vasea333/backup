@@ -1,0 +1,28 @@
+cityNum = 0
+cityList = []
+str1=""
+def AskForNumberCities():
+    cityNum = raw_input()
+    if int(cityNum) > 0 and isinstance(cityNum, int):
+        AskForCityName()
+    else:
+        return AskForNumberCities()
+def AskForCityName():
+    for i in range(0, cityNum):
+        if len(cityList) ==  cityNum:
+            break
+        else:
+            city = raw_input().upper()
+            if isinstance(city, str) and False == any(city in s for s in cityList):
+                cityList.append(city)
+            else:
+                AskForCityName()
+def PrintFirstCitySentence():
+    for i in range (0, len(cityList)):
+        str1 =str1 +" and "+ cityList[i]+str(i+1)
+    print str1[4:]
+
+
+def PrintAddOneCityNumSentence():
+    pass
+AskForNumberCities()
