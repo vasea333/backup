@@ -8,3 +8,6 @@ in the development of Web services. The use of REST is often preferred over the 
 SOAP (Simple Object Access Protocol) style because REST does not leverage as much bandwidth,
 which makes it a better fit for use over the Internet. The SOAP approach requires writing or using a provided
 server program (to serve data) and a client program (to request data).
+
+
+apt-get install python-nose
