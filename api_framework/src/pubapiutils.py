@@ -10,6 +10,8 @@ from email.utils import formatdate
 import filecmp
 from requests_futures.sessions import FuturesSession as request
 from concurrent.futures import ThreadPoolExecutor
+from unittest import TestCase
+import time
 
 
 class Config:
@@ -23,26 +25,47 @@ class Config:
         self.admin_login = self.parser.get('Server', 'user')
         self.password = self.parser.get('Server', 'passwd')
         self.puser = self.parser.get('Server', 'puser')
-        self.testpath = self.parser.get('Server', 'testpath')
         self.testdata = './test_files'
 
 
+class TestCaseClass(TestCase):
+
+    def __init__(self, *args, **kwargs):
+        super(TestCaseClass, self).__init__(*args, **kwargs)
+
+    @classmethod
+    def setUpClass(cls):
+        cls.no_json = 'NoJSON'
+        cls.config = Config()
+
+    def setUp(self):
+        self.config.testpath = '/Shared/dynamic_name_%s' % str(time.time()).replace('.', '')
+        self.utils = Utils(self.config)
+        self.calls = self.utils.calls
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.calls = Calls(cls.config)
+        cls.calls.delete_all_except('Documents')
+
+
 class Calls:
-    def __init__(self):
-        self.config = Config()
+    def __init__(self, config):
+        self.config = config
         self.no_json = 'NoJSON'
 
     def add_file_annotation(self, path, note=None, content_type='application/vnd.egnyte.annotations.request+json',
-                            accept='application/vnd.egnyte.annotations.response+json', method='POST', username=None, password=None):
+                            accept='application/vnd.egnyte.annotations.response+json', method=None, username=None, password=None):
         if username is None:
             username = self.config.admin_login
         if password is None:
             password = self.config.password
+        if method is None:
+            method = method
 
         domain = self.config.domain
         endpoint = '/public-api/v1/notes'
         url = domain + endpoint
-        method = method
         if note is None:
             note = Utils.random_name()
         headers = dict()
@@ -58,10 +81,10 @@ class Calls:
 
         session = request(executor=ThreadPoolExecutor(max_workers=10))
         r = session.request(
-                method=method,
-                url=url,
-                headers=headers,
-                data=data
+            method=method,
+            url=url,
+            headers=headers,
+            data=data
         )
         return r
 
@@ -94,6 +117,7 @@ class Calls:
         data = json.dumps(data)
 
         headers['Authorization'] = 'Basic %s' % base64.b64encode('%s:%s' % (username, password))
+
 
         if not async:
 
@@ -312,7 +336,9 @@ class Calls:
         return r
 
     def list_folders(self, folder_path, domain=None, method=None, content_type=None, accept=None, username=None,
-                     password=None, print_call=True, caller=None):
+                     password=None, print_call=True, caller=None, allow_link_type=None, perms=None, include_perm=None,
+                     list_content=None):
+
         if domain is None:
             domain = self.config.domain
         if method is None:
@@ -336,10 +362,21 @@ class Calls:
 
         headers['Authorization'] = 'Basic %s' % base64.b64encode('%s:%s' % (username, password))
 
+        params = dict()
+        if list_content is not None:
+            params['list_content'] = list_content
+        if allow_link_type is not None:
+            params['allowed_link_types'] = allow_link_type
+        if perms is not None:
+            params['perms'] = perms
+        if include_perm is not None:
+            params['include_perm'] = include_perm
+
         r = requests.request(
             method=method,
             url=url,
-            headers=headers
+            headers=headers,
+            params=params
         )
 
         try:
@@ -465,11 +502,26 @@ class Calls:
         else:
             print('\nNo body in the response.')
 
+    def delete_all_except(self, l):
+        resp = self.list_folders(folder_path='/Shared', caller='Cleanup')
+        l1 = resp.json
+
+        for i in range(len(l1['folders'])):
+            if l1['folders'][i]['name'] in l:
+                l1['folders'][i] = None
+
+        while l1['folders'].count(None) != len(l1['folders']):
+            for elem in l1['folders']:
+                if elem is not None:
+                    self.delete_folder(parent_path='/Shared', name=elem['name'], caller='Cleanup')
+                    index = l1['folders'].index(elem)
+                    del l1['folders'][index]
+
 
 class Utils:
-    def __init__(self):
-        self.config = Config()
-        self.calls = Calls()
+    def __init__(self, config):
+        self.config = config
+        self.calls = Calls(config)
 
     @staticmethod
     def random_name():
@@ -494,11 +546,8 @@ class Utils:
                     index = l1['folders'].index(elem)
                     del l1['folders'][index]
 
-    def form_standard_path(self, name, dir_name = None):
-        if dir_name is None:
-            return '%s/%s' % (self.config.testpath, name)
-        else:
-            return '%s/%s/%s' % (self.config.testpath, dir_name, name)
+    def form_standard_path(self, name):
+        return '%s/%s' % (self.config.testpath, name)
 
     def gen_file(self, file_name=None, block_size=None, num_blocks=None, text=None):
         if block_size is None:
