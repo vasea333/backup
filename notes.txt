@@ -11,3 +11,8 @@ server program (to serve data) and a client program (to request data).
 
 
 apt-get install python-nose
+
+ssh apiclass@52.11.115.217
+scp apiclass@52.11.115.217:/home/apiclass/test.txt /Users/arusu/PycharmProjects/
+scp test.txt apiclass@55.11.115.217:/home/apiclass
+chmod 777
