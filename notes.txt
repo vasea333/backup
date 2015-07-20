@@ -16,3 +16,32 @@ ssh apiclass@52.11.115.217
 scp apiclass@52.11.115.217:/home/apiclass/test.txt /Users/arusu/PycharmProjects/
 scp test.txt apiclass@55.11.115.217:/home/apiclass
 chmod 777
+
+REQUEST PYTHON
+
+domain = self.config.domain
+endpoint = '/public-api/v1/notes'
+url = domain + endpoint
+method = method
+if note is None:
+    note = Utils.random_name()
+headers = dict()
+data = dict()
+data['path'] = path
+data['body'] = note
+
+headers['Content-Type'] = content_type
+headers['Accept'] = accept
+headers['Authorization'] = 'Basic %s' % base64.b64encode('%s:%s' % (username, password))
+
+data = json.dumps(data)
+
+session = request(executor=ThreadPoolExecutor(max_workers=10))
+r = session.request(
+        method=method,
+        url=url,
+        headers=headers,
+        data=data
+)
+return r
+
