@@ -7,8 +7,8 @@ class TestClass(TestCaseClass):
     def test_move_folder_positive(self):
         folder1 = self.utils.random_name()
         folder2 = self.utils.random_name()
-        folder2_path = self.utils.form_standard_path(folder2)
-        folder1_path = self.utils.form_standard_path(folder1)
+        folder2_path = '%s/%s' % (self.config.testpath, folder2)
+        folder1_path = '%s/%s' % (self.config.testpath, folder1)
         self.calls.create_folder(folder1)
         self.calls.create_folder(folder2)
         resp = self.calls.move_item(name=folder1, destination=folder2_path)
@@ -22,7 +22,7 @@ class TestClass(TestCaseClass):
     def test_move_non_existent_folder(self):
         folder1 = self.utils.random_name()
         folder2 = self.utils.random_name()
-        folder1_path = self.utils.form_standard_path(folder1)
+        folder1_path = '%s/%s' % (self.config.testpath, folder1)
         self.calls.create_folder(folder1)
         resp = self.calls.move_item(name=folder2, destination=folder1_path, parent_path=self.config.testpath)
         assert resp.status_code == httplib.NOT_FOUND
@@ -50,7 +50,19 @@ class TestClass(TestCaseClass):
                     assert resp.json['errorMessage'] == 'You do not have permission to perform this action'
                 self.calls.delete_folder(name='', parent_path=self.config.testpath)
 
-    def test_merge_two_items_same_name(self):
+
+    def test_move_folder_into_file(self):
+        file1 = self.utils.gen_file()
+        folder = self.utils.random_name()
+        target_file_path = self.utils.form_standard_path(file1)
+        self.calls.upload(file1)
+        self.calls.create_folder(folder)
+        resp = self.calls.move_item(name=folder, destination=target_file_path)
+        assert resp.status_code == httplib.FORBIDDEN
+        assert resp.json['errorMessage'] == 'A file with the same name already exists: %s' % target_file_path
+
+'''
+     def test_merge_two_items_same_name(self):
         item = self.utils.random_name()
         source_folder = self.utils.random_name()
         target_folder = self.utils.random_name()
@@ -63,13 +75,4 @@ class TestClass(TestCaseClass):
         resp = self.calls.move_item(name=item, destination=target_folder_path, parent_path=source_folder_path)
         assert resp.status_code == httplib.OK
         self.calls.delete_folder(name='', parent_path=self.config.testpath)
-
-    def test_move_folder_into_file(self):
-        file1 = self.utils.gen_file()
-        folder = self.utils.random_name()
-        target_file_path = self.utils.form_standard_path(file1)
-        self.calls.upload(file1)
-        self.calls.create_folder(folder)
-        resp = self.calls.move_item(name=folder, destination=target_file_path)
-        assert resp.status_code == httplib.FORBIDDEN
-        assert resp.json['errorMessage'] == 'A file with the same name already exists: %s' % target_file_path
+'''
