@@ -10,4 +10,3 @@ class TestClass(TestCaseClass):
         resp = self.calls.list_folders(folder_path=self.config.testpath, allow_link_type=True, perms=True,
                                        list_content=True)
         assert resp.status_code == httplib.OK
-        assert resp.json == 1
