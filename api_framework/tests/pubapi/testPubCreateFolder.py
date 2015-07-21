@@ -1,21 +1,8 @@
-from pubapiutils import Calls
-from pubapiutils import Config
-from pubapiutils import Utils
 import httplib
-from unittest import TestCase
+from pubapiutils import TestCaseClass
 
 
-class TestClass(TestCase):
-
-    @classmethod
-    def setUpClass(cls):
-        cls.no_json = 'NoJSON'
-        cls.calls = Calls()
-        cls.config = Config()
-        cls.utils = Utils()
-
-    def setUp(self):
-        self.utils.delete_all_except(['Documents'])
+class TestClass(TestCaseClass):
 
     def test_create_5_folders_positive(self):
         l = []
@@ -68,6 +55,5 @@ class TestClass(TestCase):
         resp = self.calls.list_folders(folder_path=self.config.testpath)
         while len(resp.json['folders']) != 100:
             resp = self.calls.list_folders(folder_path=self.config.testpath)
-
         print(len(resp.json['folders']))
         assert len(resp.json['folders']) == 100
