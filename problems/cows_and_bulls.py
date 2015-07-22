@@ -34,3 +34,4 @@ def count(l1, l2):
     return cows, bulls
 
 print('Cows: %s, Bulls: %s' % count(user_input(), generate_random_list()))
+

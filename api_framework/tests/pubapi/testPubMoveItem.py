@@ -50,7 +50,6 @@ class TestClass(TestCaseClass):
                     assert resp.json['errorMessage'] == 'You do not have permission to perform this action'
                 self.calls.delete_folder(name='', parent_path=self.config.testpath)
 
-
     def test_move_folder_into_file(self):
         file1 = self.utils.gen_file()
         folder = self.utils.random_name()
@@ -61,8 +60,7 @@ class TestClass(TestCaseClass):
         assert resp.status_code == httplib.FORBIDDEN
         assert resp.json['errorMessage'] == 'A file with the same name already exists: %s' % target_file_path
 
-'''
-     def test_merge_two_items_same_name(self):
+    def test_merge_two_items_same_name(self):
         item = self.utils.random_name()
         source_folder = self.utils.random_name()
         target_folder = self.utils.random_name()
@@ -75,4 +73,3 @@ class TestClass(TestCaseClass):
         resp = self.calls.move_item(name=item, destination=target_folder_path, parent_path=source_folder_path)
         assert resp.status_code == httplib.OK
         self.calls.delete_folder(name='', parent_path=self.config.testpath)
-'''

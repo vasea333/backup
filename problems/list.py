@@ -1,3 +1,7 @@
+import random
+
+
+
 l = range(1, 11)
 for i in range(0, len(l)):
     print (l[i] * 2)
@@ -11,6 +15,9 @@ l.sort()
 l.append('Oleg')
 print(l)
 ## the end
+
+#random list
+f = [random.randrange(1, 10) for _ in range(0, 4)]
 
 
 
