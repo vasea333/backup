@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/api_ody.iml" filepath="$PROJECT_DIR$/.idea/api_ody.iml" />
+      <module fileurl="file://$USER_HOME$/PycharmProjects/ody/v1/.idea/api_ody.iml" filepath="$USER_HOME$/PycharmProjects/ody/v1/.idea/api_ody.iml" />
     </modules>
   </component>
 </project>
