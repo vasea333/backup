@@ -1,3 +1,11 @@
+#def xyz_there(str):
+#  for i in range(len(str)):
+#      print(str[-i:])
+#xyz_there("12.i"
+
+
+
+
 def division(a,b):
     z = 0
     if ((a>0 and b>0)or(a<0 and b<0)):
