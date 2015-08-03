@@ -11,8 +11,8 @@ class LoginTest(unittest.TestCase):
         self.driver.get("https://www.facebook.com/")
     def test_Login(self):
         driver = self.driver
-        facebookUsername = "alex.como@mail.ru"
-        facebookPassword = "mariposa1282"
+        facebookUsername = "username"
+        facebookPassword = "pass"
 
 
         emailFieldID      = "email"
