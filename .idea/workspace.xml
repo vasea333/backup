@@ -2,19 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="490d30e5-731c-4495-b170-8d9663d1f263" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/selemium/PopUp.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/java/PopUpClass.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/selemium/RandomCalendar.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/java/RandomNumber.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/java/hw3.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/java/hw31.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/java/hw33.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/java/javaTutorial2Class.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/java/javaTutorial3.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/java/javaTutorial4.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/java/pizzeriaNapolitana.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/selemium/switchToWindowTest.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/problems/division.py" afterPath="$PROJECT_DIR$/problems/division.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="api_alex.iws" />
@@ -265,20 +252,6 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="api_ody" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="api_ody" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="api_ody" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="selemium" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -949,7 +922,13 @@
       <option name="project" value="LOCAL" />
       <updated>1438627984165</updated>
     </task>
-    <option name="localTasksCounter" value="38" />
+    <task id="LOCAL-00038" summary="8.3">
+      <created>1438630318882</created>
+      <option name="number" value="00038" />
+      <option name="project" value="LOCAL" />
+      <updated>1438630318882</updated>
+    </task>
+    <option name="localTasksCounter" value="39" />
     <servers />
   </component>
   <component name="TodoView" selected-index="1">
@@ -1058,7 +1037,8 @@
     <MESSAGE value="last1" />
     <MESSAGE value="7.24" />
     <MESSAGE value="7.25" />
-    <option name="LAST_COMMIT_MESSAGE" value="7.25" />
+    <MESSAGE value="8.3" />
+    <option name="LAST_COMMIT_MESSAGE" value="8.3" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
